@@ -1,7 +1,7 @@
 'use strict';
 const axios = require('axios')
 
-module.exports.luvbotScheduler = async (event, context) => {
+exports.handler = async (event, context) => {
   return new Promise((resolve, reject) => {
   axios.get('https://nodebot-rdetwukqdy.now.sh/make-playlist')
     .then((res) => {
