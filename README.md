@@ -3,11 +3,10 @@
 The infamous bot and playlist-manager for the iluvdrumandbass Spotify playlist.
 
 ## Setup
-First setup a Spotify account and then visit https://developer.spotify.com/dashboard/  
+First setup a Spotify account and then visit:
+https://developer.spotify.com/dashboard/  
 
-Procure a **Client ID** and a **Client Secret**
-
-Run the services as follows:
+Procure a **Client ID** and a **Client Secret** and run the services as follows:
 
 ### refresh-token-getter
 
@@ -15,17 +14,20 @@ In order to have a service that persistantly hits the Spotify API without requir
 You'll need a **refresh token**.  
 
 In order to get a refresh token:
-**cd refresh-token-getter** .
+**cd refresh-token-getter**   
+
 copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.
+
 **npm install**
 **npm run start**
+
 visit http://localhost:3333 or whatever port yout set the PORT variable to in your .env file.
+
 **Login with Spotify** and then copy paste the **refresh token** that appears in the browser after login.
 
 You will need this refresh token for your now credentials in the zeit-bot/now.js file you will create.
 
 
-As the 
 ### zeit-bot  
 
 First you will need a Telegram bot token. This article explains how to get one:
@@ -34,7 +36,7 @@ https://www.siteguarding.com/en/how-to-get-telegram-bot-api-token
 Install the NOW cli with **npm install -g now**  
 
 Copy the example-now.json into a file called now.json and populate the new file with the tokens you got from spotify above
-and the other variables described in this file
+and the other variables described in this file.
 
 Deploy the service with the command **now** from inside the zeit-bot folder in your terminal.
 
