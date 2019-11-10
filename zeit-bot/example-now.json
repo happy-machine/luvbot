@@ -1,6 +1,6 @@
 {
     "env":{
-        "DROPBOX":"YOUR DROPBOX LINK",
+        "DROPBOX":"YOUR DROPBOX LINK ie. https://dl.dropboxusercontent.com/s/s0meCRa5yt0ken/PlayboyLabelUrls.txt?dl=1",
         "EMAIL_PASSWORD":"",
         "MAIL_DS":"",
         "MAIL_SB":"",
