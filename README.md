@@ -8,8 +8,10 @@ The infamous bot and scheduler for the iluvdrumandbass Spotify playlist
 >ie. current schedule is cron(1/30 * ? * Mon-Sat *) which is half hourly exluding sunday.
 
 #zeit-bot
-Install the NOW cli with *npm install -g now*
-Deploy the service with the command *now*
+Install the NOW cli with *npm install -g now* . 
+
+Deploy the service with the command *now*  
+
 Connect the instance to your telegram bot via webhook:
 >curl -F "url=https://{YOUR NOW GENERATED DEPLOYMENT URL}/new-message" /
 >https://api.telegram.org/bot{TELEGRAM BOT TOKEN}/setWebhook"
