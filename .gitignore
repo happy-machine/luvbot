@@ -5,3 +5,5 @@ node_modules
 .DS_Store
 pid/*
 zeit-bot/now.json
+refresh-toke-getter/node_modules
+refresh-toke-getter/.env
