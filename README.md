@@ -8,13 +8,13 @@ or just use serverless or aws cli to upload to aws, and set a cloudwatch event t
 
 The current schedule is:
 >cron(1/30 * ? * Mon-Sat *)
-> which is half hourly exluding sunday.
+which is half hourly exluding sunday.
 
 ## zeit-bot  
 
-Install the NOW cli with *npm install -g now* . 
+Install the NOW cli with **npm install -g now** . 
 
-Deploy the service with the command *now*  
+Deploy the service with the command **now** 
 
 Connect the instance to your telegram bot via webhook:
 >curl -F "url=https://{YOUR NOW GENERATED DEPLOYMENT URL}/new-message" /
