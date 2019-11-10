@@ -1,6 +1,6 @@
 ![Screnshot](https://i.imgur.com//LMRjQJJs.png)
 # luvbot
-The infamous bot and playlist manager for the iluvdrumandbass Spotify playlist
+The infamous bot and playlist-manager for the iluvdrumandbass Spotify playlist
 
 ## aws-lambda-scheduler
 To launch compress the contents of the folder into a zip named exports.zip (replace the example .zip which is the current deployment
