@@ -13,13 +13,13 @@ Procure a **Client ID** and a **Client Secret** and run the services as follows:
 In order to have a service that persistantly hits the Spotify API without requiring Oauth2 redirects and a login page
 You'll need a **refresh token**.  
 
-In order to get a refresh token:
+In order to get a refresh token:\
 **cd refresh-token-getter**   
 
 copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.
 
-**npm install**
-**npm run start**
+**npm install**\
+**npm run start**\
 
 visit http://localhost:3333 or whatever port yout set the PORT variable to in your .env file.
 
