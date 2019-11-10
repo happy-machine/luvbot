@@ -5,7 +5,10 @@ The infamous bot and scheduler for the iluvdrumandbass Spotify playlist
 ## aws-lambda-scheduler
 To launch compress the contents of the folder into a zip named exports.zip (replace the example .zip which is the current deployment
 or just use serverless or aws cli to upload to aws, and set a cloudwatch event to trigger exports.handler on a cron interval
-ie. current schedule is >cron(1/30 * ? * Mon-Sat *)> which is half hourly exluding sunday.
+
+The current schedule is:
+>cron(1/30 * ? * Mon-Sat *)
+> which is half hourly exluding sunday.
 
 ## zeit-bot  
 
