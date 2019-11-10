@@ -1,3 +1,10 @@
+/* THIS WAS THE FIRST JAVASCRIPT SERVICE I EVER WROTE, HENCE THE SPAGHETTI CODE, SORRY
+WILL GET ROUND TO REFACTORING WHEN I HAVE TIME, THE MOST NOTABLE ISSUES ARE THE MIX OF VARIOUS
+PRE ES6 CONVENTIONS WITH ES7, THAT THERE ARE NO IMPORTS, LOTS OF GLOBALS ETC ETC
+
+THIS PROJECT STARTED OFF AS A SEPERATE BOT AND SCHEDULER CODE, WHICH ARE NOW ENCAPSULATED IN TWO FUNCTIONS
+WHICH TO SOME EXTENT EXPLAINS WHY I USED REQUEST_PROMISE AND AXIOS IN THE SAME FILE (??)*/
+
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
@@ -8,7 +15,21 @@ const axios = require('axios')
 const os = require('os')
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
-const { DROPBOX, EMAIL_PASSWORD, MAIL_DS, MAIL_SB, REFRESH_TOKEN, CLIENT_ID, CLIENT_SECRET } = process.env
+const { 
+    DROPBOX, 
+    EMAIL_PASSWORD, 
+    MAIL_DS, 
+    MAIL_SB, 
+    REFRESH_TOKEN, 
+    CLIENT_ID, 
+    CLIENT_SECRET,
+    LABEL_ROOM,
+    ADMIN_ROOM,
+    ARTIST_ROOM,
+    MAIN_ROOM,
+    TEST_ROOM,
+    BOT_TOKEN
+} = process.env;
 var destUrl="", replUrl="", workData, endUrl, chatObject = {}, updateAlive, labelsAdded='', oldLabels='';
 var playlistReport="I can't get the report right now, please try again later";
 var robotHailsIn = ['hey luvbot', 'hey lovbot', 'hey lvbot', 'hey lubot', 'hey lovebot'];
@@ -159,12 +180,12 @@ app.post('/new-message', function (req, res) {
             var msgIn=message.text.toLowerCase()
             var userName = message.from.first_name
             var id = message.chat.id
-            var messageId=message.message_id
-            var labelRoom = "-1001143247436",
-                adminRoom = "-266414577",
-                artistRoom = "-1001138187085", 
-                mainRoom = "-1001259716845",
-                testRoom = "459812199";
+            var messageId = message.message_id;
+            var labelRoom = LABEL_ROOM,
+                adminRoom = ADMIN_ROOM,
+                artistRoom = ARTIST_ROOM, 
+                mainRoom = MAIN_ROOM,
+                testRoom = TEST_ROOM;
             var notResponded = true,
                 toSend = {
                     content: null
@@ -513,7 +534,7 @@ app.post('/new-message', function (req, res) {
         switch (toSend.type) {
             case "message":
             console.log(id)
-                axios.post('https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/sendMessage', {
+                axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendMessage', {
                     chat_id: id,
                     status: 200,
                     text: toSend.content 
@@ -529,7 +550,7 @@ app.post('/new-message', function (req, res) {
                 break;
 
             case "photo":
-                axios.post('https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/sendPhoto', {
+                axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendPhoto', {
                     chat_id: id,
                     type: 'photo',
                     photo: 'https://imgur.com/Mk2MvBQ',
@@ -549,7 +570,7 @@ app.post('/new-message', function (req, res) {
             case "fight":
                 console.log(id)
                 for (ft=0;ft<14;ft++){
-                    axios.post('https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/sendMessage', {
+                    axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendMessage', {
                         chat_id: id,
                         status: 200,
                         text: randomPick(fightTalk)    
@@ -576,21 +597,21 @@ app.post('/new-message', function (req, res) {
                 var time = new Date();
                 var chatSize="Hey " + userName + " It\'s "+ time.toUTCString() + " There are ";
                 request.get({
-                    url:'https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/getChatMembersCount?chat_id=-1001259716845'
+                    url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=-1001259716845'
                 }, 
                 function (error1, responseB, response1) {
                     chatSize += (JSON.parse(response1).result) + " People in the Main Room, ";
                     request.get({
-                        url:'https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/getChatMembersCount?chat_id=-1001138187085'
+                        url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=-1001138187085'
                     }, 
                     function (error1, responseB, response1) {
                         chatSize += (JSON.parse(response1).result) + " People in the Artist Room and ";
                         request.get({
-                            url:'https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/getChatMembersCount?chat_id=-1001143247436'
+                            url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=-1001143247436'
                         }, 
                         function (error1, responseB, response1) {
                             chatSize += (JSON.parse(response1).result) + " People in the Label Room. Have a nice day!"
-                            axios.post('https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/sendMessage', {
+                            axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendMessage', {
                                 chat_id: id,
                                 status: 200,
                                 text: chatSize
@@ -1203,7 +1224,7 @@ function updateThePlaylist(resToLambda, room = 459812199){
                 .then(function(data) {
                     console.log(colours.FgGreen,`\nPlaylist Sucessfully Replaced ${new Date().toUTCString()}\n`);
                     playlistReport+=`Updated ${new Date().toUTCString()}\n\nYou can ask me what playlists were added, or what playlists were not added 😊`
-                    axios.post('https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/sendMessage', {
+                    axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendMessage', {
                         chat_id: room,
                         status: 200,
                         text: playlistReport 
@@ -1212,7 +1233,7 @@ function updateThePlaylist(resToLambda, room = 459812199){
                     errorLog += '/n' + err
                     resToLambda && resToLambda.send('Error: ', err);
                     console.log(colours.BgRed,`\nSomething went wrong! ${err} at ${new Date().toUTCString()}\n\n`);
-                    axios.post('https://api.telegram.org/bot493535513:AAGVIVZvYqMXwhdyceVQXi6TgXi136aDLXE/sendMessage', {
+                    axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendMessage', {
                         chat_id: room,
                         status: 200,
                         text: 'Playlist update failed, retrying ..'
