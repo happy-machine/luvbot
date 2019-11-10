@@ -13,7 +13,7 @@ You'll need a refresh token.
 
 In order to get a refresh token **cd refresh-token-getter**   
 
-copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.
+copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.\
 **npm install**\
 **npm run start**
 
