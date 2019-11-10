@@ -31,7 +31,8 @@ const {
     BOT_TOKEN,
     LABEL_UPDATE_FORM_LINK,
     LABEL_NEWS_LINK,
-    LABEL_SUBMISSION_FORM_LINK
+    LABEL_SUBMISSION_FORM_LINK,
+    UPDATE_COMMAND
 } = process.env;
 var destUrl="", replUrl="", workData, endUrl, chatObject = {}, updateAlive, labelsAdded='', oldLabels='';
 var playlistReport="I can't get the report right now, please try again later";
@@ -228,7 +229,7 @@ app.post('/new-message', function (req, res) {
                     toSend.type="status";
                     break;
 
-                    case checkIntent(msgIn, 'xxxupdate'):
+                    case checkIntent(msgIn, UPDATE_COMMAND):
                     labelResource="update";
                     break;
 
