@@ -20,7 +20,7 @@ copy example.env to a file called .env and edit the file to add the tokens you r
 visit http://localhost:3333 or whatever port yout set the PORT variable to in your .env file.
 **Login with Spotify** and then copy paste the **refresh token** that appears in the browser after login.
 
-You will need this refresh token for your now credentials in the zeit-bot/now.js file you will create.
+You will need this refresh token for your now credentials in the zeit-bot/now.json file you will create.
 
 
 ### zeit-bot  
@@ -36,8 +36,7 @@ and the other variables described in this file.
 Deploy the service with the command **now** from inside the zeit-bot folder in your terminal.
 
 Connect the instance to your telegram bot via webhook:
->curl -F "url=https://{THE NOE DEPLOYMENT URL RETURNED BY THE COMMAND ABOVE}/new-message" /
->https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/setWebhook"
+>curl -F "url=https://{THE NOE DEPLOYMENT URL RETURNED BY THE COMMAND ABOVE}/new-message" https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/setWebhook
 
 You should now be able to chat with the bot via telegram.
 
