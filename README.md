@@ -12,10 +12,10 @@ Run the services as follows:
 ### refresh-token-getter
 
 In order to have a service that persistantly hits the Spotify API without requiring Oauth2 redirects and a login page
-You'll need a ** refresh token **.  
+You'll need a **refresh token**.  
 
 In order to get a refresh token:
-**cd refresh-token-getter**
+**cd refresh-token-getter** .
 copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.
 **npm install**
 **npm run start**
