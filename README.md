@@ -1,6 +1,6 @@
 ![Screnshot](https://i.imgur.com//LMRjQJJs.png)
 # luvbot
-The infamous bot and scheduler for the iluvdrumandbass Spotify playlist
+The infamous bot and playlist manager for the iluvdrumandbass Spotify playlist
 
 ## aws-lambda-scheduler
 To launch compress the contents of the folder into a zip named exports.zip (replace the example .zip which is the current deployment
@@ -20,6 +20,9 @@ Connect the instance to your telegram bot via webhook:
 >https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/setWebhook"
 
 You should now be able to chat with the bot via telegram.
+
+** Note that you will need to create a link containing the urls to add to the playlist, in the example this is
+done using a dropbox link **
 
 
 
