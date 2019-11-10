@@ -46,6 +46,12 @@ or just use serverless or aws cli to upload to aws, and set a cloudwatch event t
 The current schedule is half hourly exluding sunday:
 >cron(1/30 * ? * Mon-Sat *)
 
+The current conditional rule set is as follows:
+Everytime the playlist runs the script checks all the labels one track playlists to pull the first (which should be the only playlist url) in that list.
+The script checks the updated at date and the uploaded to Spotify date and disqualifies anything that has been added to the label playlist more than a week after its upload to spotify.
+In order to follow rules for album tracks however it first checks that the track is not part of an album (containing four or more tracks), it will allow album tracks to be posted up to a month after release to allow a track a week from an album for four weeks, with a limit of up to four tracks.
+If the label breaks any of these rules, logging will be stored that the bot can pass to telegram to issue a list of labels added not added, and specific issues with the adding of specific tracks. to_be_logged ordinal specifies the order priority of an event when it is listed in the human readable log.
+
 **Note that you will need to create a link containing the urls to add to the playlist, in the example this is
 done using a dropbox link.**
 
