@@ -28,7 +28,10 @@ const {
     ARTIST_ROOM,
     MAIN_ROOM,
     TEST_ROOM,
-    BOT_TOKEN
+    BOT_TOKEN,
+    LABEL_UPDATE_FORM_LINK,
+    LABEL_NEWS_LINK,
+    LABEL_SUBMISSION_FORM_LINK
 } = process.env;
 var destUrl="", replUrl="", workData, endUrl, chatObject = {}, updateAlive, labelsAdded='', oldLabels='';
 var playlistReport="I can't get the report right now, please try again later";
@@ -210,7 +213,7 @@ app.post('/new-message', function (req, res) {
                         labelResource="remove"
                         break;  */
                     case checkIntent(msgIn, orderIn, 'label urls'):
-                        toSend = makeTelMsg('Here is the list of Playlist URLs https://www.dropbox.com/s/ifn2q4eqdagaohf/PlayboyLabelUrls.txt?dl=0');
+                        toSend = makeTelMsg('Here is the list of Playlist URLs ' + DROPBOX);
                         break; 
 
                     case checkIntent(msgIn, 'not','added',AND):
@@ -230,7 +233,7 @@ app.post('/new-message', function (req, res) {
                     break;
 
                     case checkIntent(msgIn, 'link','playlist'):
-                        toSend = makeTelMsg('Sure it\'s https://open.spotify.com/user/iluvdrumandbass/playlist/1yRrivuEUTh5upqzeZOFBG');
+                        toSend = makeTelMsg('Sure it\'s ' + MAIN_PLAYLIST_LINK);
                         break;
 
                     case checkIntent(msgIn, 'love'):
@@ -262,7 +265,7 @@ app.post('/new-message', function (req, res) {
                         break;
 
                     case checkIntent(msgIn, playlistIn, questionIn,AND):
-                        toSend = makeTelMsg('to add your 1 track a week to the playlist you need to fill out the label submission form here: https://goo.gl/vzvVPs');
+                        toSend = makeTelMsg('to add your 1 track a week to the playlist you need to fill out the label submission form here: ' + LABEL_SUBMISSION_FORM_LINK);
                         break;
                     /*  HATEBOT CODE!
                     case checkIntent(msgIn, 'fight','hatebot'):
@@ -339,17 +342,17 @@ app.post('/new-message', function (req, res) {
                         break;
 
                     case checkIntent(msgIn, submissionIn):
-                        toSend = makeTelMsg('here is the label submission form: https://goo.gl/vzvVPs');
+                        toSend = makeTelMsg('here is the label submission form: ' + LABEL_SUBMISSION_FORM_LINK);
                         console.log("Submission Form Requested");
                         break;
 
                     case checkIntent(msgIn, 'put', questionIn):
-                        toSend = makeTelMsg('here is the label submission form: https://goo.gl/vzvVPs');
+                        toSend = makeTelMsg('here is the label submission form: ' + LABEL_SUBMISSION_FORM_LINK);
                         console.log("Submission Form Requested");
                         break;
 
                     case checkIntent(msgIn, 'label', 'playlist'):
-                        toSend = makeTelMsg('you can fill in the label submission form here: https://goo.gl/vzvVPs');
+                        toSend = makeTelMsg('you can fill in the label submission form here: ' + LABEL_SUBMISSION_FORM_LINK);
                         console.log("Submission Form Requested");
                         break;
 
@@ -417,7 +420,7 @@ app.post('/new-message', function (req, res) {
                         msgIn=message.text;
                         switch (true) {
                             case labelResource == "news":
-                                toSend = makeTelMsg('Latest label News: https://goo.gl/iAVih5');
+                                toSend = makeTelMsg('Latest label News: ' + LABEL_NEWS_LINK);
                                 break;
 
                             case labelResource == "add":
@@ -504,7 +507,7 @@ app.post('/new-message', function (req, res) {
                                 break;
 
                             case labelResource == "form":
-                                toSend = makeTelMsg('here is the label update form: https://goo.gl/Anx2Qx');
+                                toSend = makeTelMsg('here is the label update form: ' + LABEL_UPDATE_FORM_LINK);
                                 break;
 
                             case labelResource == "log":
@@ -597,17 +600,17 @@ app.post('/new-message', function (req, res) {
                 var time = new Date();
                 var chatSize="Hey " + userName + " It\'s "+ time.toUTCString() + " There are ";
                 request.get({
-                    url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=-1001259716845'
+                    url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=' + MAIN_ROOM
                 }, 
                 function (error1, responseB, response1) {
                     chatSize += (JSON.parse(response1).result) + " People in the Main Room, ";
                     request.get({
-                        url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=-1001138187085'
+                        url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=' + ARTIST_ROOM
                     }, 
                     function (error1, responseB, response1) {
                         chatSize += (JSON.parse(response1).result) + " People in the Artist Room and ";
                         request.get({
-                            url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=-1001143247436'
+                            url:'https://api.telegram.org/' + BOT_TOKEN + '/getChatMembersCount?chat_id=' + LABEL_ROOM
                         }, 
                         function (error1, responseB, response1) {
                             chatSize += (JSON.parse(response1).result) + " People in the Label Room. Have a nice day!"
