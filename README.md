@@ -3,10 +3,11 @@
 The infamous bot and playlist-manager for the iluvdrumandbass Spotify playlist.
 
 ## Setup
-First setup a Spotify account and then visit https://developer.spotify.com/dashboard/
-Procure a ** Client ID ** and ** Client Secret **
+First setup a Spotify account and then visit https://developer.spotify.com/dashboard/  
 
-Then run the services as follows:
+Procure a **Client ID** and a **Client Secret**
+
+Run the services as follows:
 
 ### refresh-token-getter
 
@@ -14,14 +15,14 @@ In order to have a service that persistantly hits the Spotify API without requir
 You'll need a ** refresh token **.  
 
 In order to get a refresh token:
-** cd refresh-token-getter **
+**cd refresh-token-getter**
 copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.
-** npm install **
-** npm run start **
-visit http://localhost:3333 or whatever port yout set the PORT variable to in your .env file
-** Login with Spotify ** and then copy paste the ** refresh token ** that appears in the browser after login
+**npm install**
+**npm run start**
+visit http://localhost:3333 or whatever port yout set the PORT variable to in your .env file.
+**Login with Spotify** and then copy paste the **refresh token** that appears in the browser after login.
 
-You will need this refresh token for your now credentials in the zeit-bot/now.js file you will create
+You will need this refresh token for your now credentials in the zeit-bot/now.js file you will create.
 
 
 As the 
