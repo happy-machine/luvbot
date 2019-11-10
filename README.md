@@ -1,4 +1,4 @@
-![Screnshot](https://i.imgur.com//LMRjQJJ.png)
+![Screnshot](https://i.imgur.com//LMRjQJJs.png)
 ## luvbot
 The infamous bot and scheduler for the iluvdrumandbass Spotify playlist
 
