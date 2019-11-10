@@ -36,7 +36,7 @@ and the other variables described in this file.
 Deploy the service with the command **now** from inside the zeit-bot folder in your terminal.
 
 Connect the instance to your telegram bot via webhook:
->curl -F "url=https://{THE NOE DEPLOYMENT URL RETURNED BY THE COMMAND ABOVE}/new-message" /
+>curl -F "url=https://{THE NOE DEPLOYMENT URL RETURNED BY THE COMMAND ABOVE}/new-message" 
 >https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/setWebhook"
 
 You should now be able to chat with the bot via telegram.
