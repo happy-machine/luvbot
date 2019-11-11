@@ -1,3 +1,5 @@
+const axios = require('axios');
+const request = require('request');
 import { checkIntent, randomPick, makeTelMsg } from './bot';
 import { ROOM_NAMES } from '../service/room-service';
 import * as vocab from './vocab';
@@ -11,15 +13,16 @@ const {
     LABEL_UPDATE_FORM_LINK,
     LABEL_NEWS_LINK,
     LABEL_SUBMISSION_FORM_LINK,
-    UPDATE_COMMAND
+    UPDATE_COMMAND,
+    BOT_TOKEN
 } = process.env;
 
 
 function messageFactory (inputs) {
-    const msgIn, oldLabels, labelsAdded, playlistReport, message = {inputs};
+    const { msgIn, oldLabels, labelsAdded, playlistReport, message } = inputs;
     const userName = message.from.first_name;
-    const toSend = { content: null };
-    let resourceType = null;
+    let toSend = { content: null };
+    let resourceType = null, reportWanted = false;
     let tmp;
 
     switch (true) {
@@ -228,7 +231,8 @@ function messageFactory (inputs) {
             toSend = makeTelMsg(randomPick(vocab.confusedOut));
             break;
     };
-    return { toSend, resourceType };
+    console.log('returning toSend as: ', toSend)
+    return { toSend, resourceType, reportWanted };
 };
 
 function adminFactory (inputs) {
@@ -345,7 +349,8 @@ function adminFactory (inputs) {
 };
 
 function resourceFactory (inputs) {
-    const { toSend, message, res} = inputs
+    const { toSend, message, res } = inputs
+    const userName = message.from.first_name;
     switch (toSend.type) {
         case "message":
         console.log(message.chat.id)

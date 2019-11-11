@@ -1,3 +1,5 @@
+import { colours } from '../constants';
+
 function todaysDate(){
     var q = new Date(), m = q.getMonth(), d = q.getDate(), y = q.getFullYear()
     return new Date(y, m, d)
@@ -28,6 +30,8 @@ function errorRespond(err) {
             }();
         };
     } else {
-        return console.log(colours.FgRed, 'Error: undefined ' + err)
+        return console.log(colours.FgRed, 'Error:  ' + err.stack)
     }
 }
+
+export { todaysDate, wait, errorRespond };

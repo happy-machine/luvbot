@@ -8,16 +8,14 @@ WHICH TO SOME EXTENT EXPLAINS WHY I USED REQUEST_PROMISE AND AXIOS IN THE SAME F
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var request=require('request');
-var fs = require('fs')
 const axios = require('axios')
-const os = require('os')
 
 require('dotenv').config()
 
 import { colours } from './constants';
-import { messageFactory, adminFactory, resourceFactory } from './lib/messageFactory';
+import { messageFactory, adminFactory, resourceFactory } from './lib/message-factory';
 import { wait, errorRespond, todaysDate } from './lib/tools';
+import { checkIntent, randomPick, makeTelMsg } from './lib/bot';
 import { playlistFactory } from './service/spotify-service';
 import { ADMIN_GROUP } from './service/room-service';
 import * as vocab from './lib/vocab';
@@ -41,7 +39,12 @@ const {
     BOT_TOKEN,
 } = process.env;
 
-let updateAlive, labelsAdded = '', oldLabels = '';
+let updateAlive, playlistReport, resultArray = [], labelsAdded = '', oldLabels = '', reportWanted = false;
+
+app.get('/diagnostic', function (req,res) {
+    console.log('Diagnostic requested at: ', new Date().toUTCString())
+    res.status(200).send({ response: 'ok' })
+});
 
 app.get('/make-playlist', function (req,res) {
     console.log('Lambda playlist requested at ', new Date().toUTCString())
@@ -51,21 +54,21 @@ app.get('/make-playlist', function (req,res) {
        
 app.post('/new-message', function (req, res) {
     const { message } = req.body
-    let toSend;
+    let toSend, resourceType, fightMode = false;
     if (!message || typeof message == "undefined") {
         return res.end();
     } else {
         if (typeof message.text !== "undefined") {
             const msgIn = message.text.toLowerCase()
-            const toSend = { content: null };
-            let fightMode = false;
+            toSend = { content: null };
             if (checkIntent(msgIn, vocab.robotHailsIn) && typeof message !== undefined) {
                 /* First check the intent of the message, returns either a message, type,
                 or both */
                 console.log('Message recieved: ', msgIn);
-                const { tmpMessage, tmpType } = messageFactory({ msgIn, oldLabels, labelsAdded, playlistReport, message });
-                toSend = tmpMessage;
-                resourceType = tmpType;
+                const response = messageFactory({ msgIn, oldLabels, labelsAdded, playlistReport, message });
+                toSend = response.toSend;
+                resourceType = response.resourceType;
+                reportWanted = response.reportWanted;
                 if (resourceType && typeof message!=undefined && fightMode==false) {
                     if (ADMIN_GROUP.includes(message.chat.id)) {
                         /* if the user is in the Admin group then operate on types accordingly */
@@ -462,6 +465,7 @@ function updateThePlaylist(resToLambda, room = 459812199){
             })
             list.shift()
             playlistFactory.prototype.calls = list.length
+            playlistFactory.prototype.oldLabels = oldLabels;
             return getPlaylists.multiCall(list)
         })
         .then(res => {
@@ -568,3 +572,5 @@ function updateThePlaylist(resToLambda, room = 459812199){
 app.listen(3000, function () {
     console.log('LuvBot now listening on port 3000! ok');
 });
+
+export { app };
