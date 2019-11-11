@@ -51,7 +51,7 @@ describe('Integration: /new-message', () => {
                         "last_name": "test"
                     },
                     "chat": {
-                        "id": MAIN_ROOM
+                        "id": TEST_ROOM
                     }
                 }
             })

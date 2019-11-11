@@ -1,6 +1,5 @@
 import { colours } from '../constants';
 import { todaysDate } from '../lib/tools';
-import { oldLabels } from '../index';
 
 function playlistFactory (status,track_name,artist_name,uri,album_id) {
     this.artist_name= artist_name;
