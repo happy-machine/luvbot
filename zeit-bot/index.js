@@ -54,7 +54,6 @@ app.get('/make-playlist', function (req,res) {
        
 app.post('/new-message', function (req, res) {
     const { message } = req.body
-    console.log('GOT A NEW MESSAGE', message)
     let toSend, resourceType, fightMode = false;
     if (!message || typeof message == "undefined") {
         return res.end();
@@ -95,7 +94,6 @@ app.post('/new-message', function (req, res) {
             return res.end();
         };
         // Return a message with resources
-        console.log('got toSend: ', toSend)
         resourceFactory({ message, toSend, res });
     }
 });
