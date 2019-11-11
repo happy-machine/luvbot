@@ -52,31 +52,31 @@ function randomPick(array) {
     return array[Math.floor(Math.random() * array.length)]
 };
 
-function makeTelMsg(content, ) {
-    var body = {
+function makeTelMsg(content) {
+    const message = {
         messageId: 35,
         content: content
     };
     switch (true) {
-        case body.content.indexOf("jpg") !== -1:
-            body.type = 'photo';
+        case message.content.indexOf("jpg") !== -1:
+            message.type = 'photo';
             break;
-        case body.content.indexOf("gif") !== -1:
-            body.type = 'photo';
+        case message.content.indexOf("gif") !== -1:
+            message.type = 'photo';
             break;
-        case body.content.indexOf("png") !== -1:
-            body.type = 'photo';
+        case message.content.indexOf("png") !== -1:
+            message.type = 'photo';
             break;
-        case body.content.indexOf("mp4") !== -1:
-            body.type = 'video';
+        case message.content.indexOf("mp4") !== -1:
+            message.type = 'video';
             break;
-        case body.content.indexOf("mpeg") !== -1:
-            body.type = 'video';
+        case message.content.indexOf("mpeg") !== -1:
+            message.type = 'video';
             break;
         default:
-            body.type = 'message'
+            message.type = 'message'
     }
-    return body
+    return message
 }
 
 export { checkIntent, randomPick, makeTelMsg };
