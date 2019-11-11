@@ -3,7 +3,7 @@
 The infamous bot and playlist-manager for the iluvdrumandbass Spotify playlist.
 
 ## Setup
-First setup a Spotify account and then visit https://developer.spotify.com/dashboard/ and follow the instructions to get a **Client ID** and a **Client Secret** then run the services as follows:
+First setup a Spotify account and then visit https://developer.spotify.com/dashboard/ and follow the instructions to get a **Client ID** and a **Client Secret** then set up the services as follows:
 
 ### refresh-token-getter
 
