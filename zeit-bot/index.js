@@ -10,9 +10,14 @@ var app = express();
 var bodyParser = require('body-parser');
 var request=require('request');
 var fs = require('fs')
-require('dotenv').config()
 const axios = require('axios')
 const os = require('os')
+
+require('dotenv').config()
+
+import { checkIntent, randomPick, makeTelMsg } from './lib/bot';
+import * as vocab from './lib/vocab';
+
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
 const { 
@@ -34,123 +39,8 @@ const {
     LABEL_SUBMISSION_FORM_LINK,
     UPDATE_COMMAND
 } = process.env;
+
 var destUrl="", replUrl="", workData, endUrl, chatObject = {}, updateAlive, labelsAdded='', oldLabels='';
-var playlistReport="I can't get the report right now, please try again later";
-var robotHailsIn = ['hey luvbot', 'hey lovbot', 'hey lvbot', 'hey lubot', 'hey lovebot'];
-var noMessageOut = ['maybe try actually asking me something?', 'can i help you?', 'who the fuck are you?', 'how can i be of service?', 'Im kind of busy, what do you want?','Man, Ty drives me crazy!'];
-var confusedOut = ['maybe try actually asking me something?', 'can i help you?', 'who the fuck are you?', 'how can i be of service?', 'Im kind of busy, what do you want?','Man, Ty drives me crazy!'];
-var welcomeIn = ['going down', 'cracking', 'it going', 'it going?', 'you doing', 'you doing?', 'how are you', 'how are you?', 'good morning', 'good afternoon', 'good evening', 'whats up', 'whats up?', 'whats happening', 'whats happening?', 'hi', 'how do', 'how are you', 'going on'];
-var welcomeOut = ['hows it going!', 'yo whats up!', 'hey! whats up!', 'whats happening?', 'word up dawg!', 'hi there!', 'yo', 'holla'];
-var questionIn = ['where', 'what', 'how', 'who', 'does', 'have', 'if', 'do', 'is', 'can', 'are'];
-var statementIn = ['have', 'got', 'theres', 'want', 'need'];
-var orderIn = ['want', 'tell', 'say', 'lets', 'send', 'give', 'get', 'make'];
-var funnyIn = ['funny', 'joke', 'gag', 'silly', 'stupid'];
-var playlistIn = ['update', 'report', 'playlist'];
-var newIn = ['new', 'happening', 'one', '1', 'top', 'today', 'now'];
-var personalIn = ['sing', 'dance', 'do', 'think', 'will', 'can', 'life', 'old'];
-var personalOut = ['Who even are this?', 'Ive got no idea what youre talking about im afraid.', 'Have you ever looked outside? its such a beautiful day.', 'Im not supposed to be a conversational robot', 'Carry on mate, see what it gets you', 'errr ok mate', 'wow', 'yeh yeh safe', 'totes bro'];
-var fightTalk = ['My love is my sword','truth will shine through your darkness Hatebot','Back off you filthy fiend','You gacky little troll','Take this!!!','Blammmmmm!!','Brappp brapp','Thats fighting talk you swine!','Fuck, i really DO have too much time on my hands','Die, Die, Die you little cryptopig!','Death to you you uncouth block of amateur Javascript'];
-var loveOut = ["love is a funny thing, i dont really fuck with it no more.", "without luh uhve, where would we be right now?", "I quite love Ty and Go, but not in a gay way.","if love is a game, im a pawn", "i had serious game back in the day", "many books have been written about love, how many have been written about you?"];
-var tiredOut = ["maybe you should get some sleep then my brother.", "im just a bot what do you want me to do about it", "maybe you should do some coke then isnt that what you dnb guys do?", "YOURE tired?!!"];
-var jokeOut = ["i dont get paid for this", "bro, YOURE the joke.", "you tried changing your snare pattern recently?", "im too busy for jokes", "there was once a dnb producer who thought he could live off production alone ...", "why dont you tell me a joke, ill be in the other room"];
-var dnbOut = ["drum and bass is for morons", "drum and bass, wasnt that big in the 90s?", "fuck dnb, im a bashment guy", "the last thing music needs now is more drum and bass", "i quite liked the nine, everything else was extra."];
-var freshOut = ["its sensible to be silent in the presence of legends", "dare you even speak his name", "genius comes in many forms", "you go back to your snare on every half bar mate, dont worry about DJ Fresh", "when Einstein was alive, people thought he was nuts"];
-var problemOut = ["any problems speak to @BasslineSmith @Gareth or @DjFreshBBK a full list of admins and moderators is available in the pinned post"];
-var listIn = ['list', 'form', 'sheet'];
-var newsIn = ['news', 'info'];
-var submissionIn = ['submission', 'submit', 'fill'];
-var pictureIn = ['picture', 'image', 'jpg', 'photo'];
-var logIn = ['full', 'log', 'breakdown', 'stats'];
-var fatherIn = ['made you', 'programmed you', 'father', 'programmer', 'maker', 'created'];
-var fatherOut = ['i was created by DJ Fresh', 'I came from the matrix', 'Dj Fresh did!'];
-var playlistDescOut = ['In 2017 artists and labels came together to create the ultimate Drum and Bass playlist featuring the hottest new Drum & Bass tracks from around the world. Updated as soon as the tracks are released and curated with love by the artists and labels themselves. If you ❤️ dnb follow and join'];
-var salesTriggerIn = ['buy', 'store', 'sell', 'trade', 'merch', 'ticket', 'pay', 'tshirt', 'hoodie'];
-var hateBot= ['Hatebot was my arch enemy','Truth and love triumphed','Hatebot is dead','Hatebot Died'];
-
-function randomPick(array) {
-    return array[Math.floor(Math.random() * array.length)]
-};
-
-AND = function () {
-    return true
-};
-
-function checkIntent(string2, anyOfArray, alsoArray, And) {
-    /*search a string for any element of anyOfArray, OPTION alsoArray one of these elements must also be found
-    if AND is set then all*/
-    var found = null
-    for (i = 0; i < anyOfArray.length; i++) {
-        if ((string2.indexOf(anyOfArray[i]) !== -1) && typeof anyOfArray == "object") {
-            found = true;
-            i = anyOfArray.length;
-        } else if (typeof anyOfArray == "string" && string2.indexOf(anyOfArray) !== -1) {
-            found = true
-        }
-    }
-    if (And) {
-        if (alsoArray) {
-            var alsoFound = 0
-            for (j = 0; j < alsoArray.length; j++) {
-                if (string2.indexOf(alsoArray[j]) !== -1) {
-                    alsoFound++
-                }
-            }
-            if ((alsoFound == alsoArray.length) && (found == 1)) {
-                found = true
-            } else {
-                found = false
-            }
-        }
-    } else {
-        if (alsoArray) {
-            var alsoFound = null
-            for (j = 0; j < alsoArray.length; j++) {
-                if ((string2.indexOf(alsoArray[j]) !== -1) && typeof alsoArray == "object") {
-                    alsoFound++;
-                } else if (typeof alsoArray == "string" && string2.indexOf(alsoArray) !== -1) {
-                    alsoFound++;
-                }
-            }
-            if ((alsoFound) && (found)) {
-                found = true
-            } else {
-                found = false
-            }
-        }
-    }
-    if (found == true) {
-        return true
-    } else {
-        return false
-    }
-};
-
-function makeTelMsg(content, ) {
-    var body = {
-        messageId: 35,
-        content: content
-    };
-    switch (true) {
-        case body.content.indexOf("jpg") !== -1:
-            body.type = 'photo';
-            break;
-        case body.content.indexOf("gif") !== -1:
-            body.type = 'photo';
-            break;
-        case body.content.indexOf("png") !== -1:
-            body.type = 'photo';
-            break;
-        case body.content.indexOf("mp4") !== -1:
-            body.type = 'video';
-            break;
-        case body.content.indexOf("mpeg") !== -1:
-            body.type = 'video';
-            break;
-        default:
-            body.type = 'message'
-    }
-    return body
-}
 
 // THIS USED TO SCHEDULE THE PLAYLIST AS IS NOW TAKEN CARE OF BY THE LAMBDA
 // YOU COULD DO IT ON NOW BUT THEN YOUD HAVE TO PAY FOR IT - GOD FORBID.
@@ -200,7 +90,7 @@ app.post('/new-message', function (req, res) {
                 fightMode=false,
                 statusMode=false,
                 outMsg = {};
-            if (checkIntent(msgIn, robotHailsIn)&&typeof message!==undefined) {
+            if (checkIntent(msgIn, vocab.robotHailsIn)&&typeof message!==undefined) {
                 console.log('Message recieved: ',msgIn);
                 switch (true) {
                     /*  case checkIntent(msgIn.substr(0,19), 'add url'):
@@ -213,15 +103,15 @@ app.post('/new-message', function (req, res) {
                     case checkIntent(msgIn.substr(0,22), 'remove url'):
                         labelResource="remove"
                         break;  */
-                    case checkIntent(msgIn, orderIn, 'label urls'):
+                    case checkIntent(msgIn, vocab.orderIn, 'label urls'):
                         toSend = makeTelMsg('Here is the list of Playlist URLs ' + DROPBOX);
                         break; 
 
-                    case checkIntent(msgIn, 'not','added',AND):
+                    case checkIntent(msgIn, 'not','added',vocab.AND):
                         toSend=makeTelMsg('These are the labels not added in the last update: '+oldLabels.substring(0,oldLabels.length-1))
                         break;
 
-                    case checkIntent(msgIn, 'were','added',AND):
+                    case checkIntent(msgIn, 'were','added',vocab.AND):
                     toSend=makeTelMsg('These are the labels added in the last update: '+labelsAdded.substring(0,labelsAdded.length-2))
                     break;
 
@@ -238,10 +128,10 @@ app.post('/new-message', function (req, res) {
                         break;
 
                     case checkIntent(msgIn, 'love'):
-                        toSend = makeTelMsg(randomPick(loveOut));
+                        toSend = makeTelMsg(randomPick(vocab.loveOut));
                         break;
 
-                    case checkIntent(msgIn, questionIn,'room'):
+                    case checkIntent(msgIn, vocab.questionIn,'room'):
                         var room;
                         switch (true) {
                             case id == labelRoom: room = "Label Room"; break;
@@ -253,38 +143,38 @@ app.post('/new-message', function (req, res) {
                         toSend = makeTelMsg('Hey '+userName+' you are in the '+room+'. Have fun!');
                         break;
 
-                    case checkIntent(msgIn,questionIn,'hatebot'):
-                        toSend = makeTelMsg(randomPick(hateBot));
+                    case checkIntent(msgIn,vocab.questionIn,'hatebot'):
+                        toSend = makeTelMsg(randomPick(vocab.hatebot));
                         break;
 
-                    case checkIntent(msgIn,questionIn,'updater'):
+                    case checkIntent(msgIn,vocab.questionIn,'updater'):
                         updateAlive==true?toSend = makeTelMsg('The playlist updater is currently up and running.'):toSend = makeTelMsg('The playlist updater is currently off.')
                         break;
 
-                    case checkIntent(msgIn, playlistIn, 'how',AND):
+                    case checkIntent(msgIn, vocab.playlistIn, 'how',vocab.AND):
                         toSend = makeTelMsg('you can update your playlist up to once a week with a new track, it must be no more than a week old, if its an album track it can be UPTO a month old');
                         break;
 
-                    case checkIntent(msgIn, playlistIn, questionIn,AND):
+                    case checkIntent(msgIn, vocab.playlistIn, vocab.questionIn,vocab.AND):
                         toSend = makeTelMsg('to add your 1 track a week to the playlist you need to fill out the label submission form here: ' + LABEL_SUBMISSION_FORM_LINK);
                         break;
                     /*  HATEBOT CODE!
                     case checkIntent(msgIn, 'fight','hatebot'):
-                    if (fightMode==true){fightMode=false; toSend = makeTelMsg(randomPick(fightTalk))}
+                    if (fightMode==true){fightMode=false; toSend = makeTelMsg(randomPick(vocab.fightTalk))}
                     else{toSend = makeTelMsg('hey Hatebot, lets have it.. with honour');fightMode=true}
                     toSend.type="fight"
                     break;*/
 
                     case checkIntent(msgIn, 'tired'):
-                        toSend = makeTelMsg(randomPick(tiredOut));
+                        toSend = makeTelMsg(randomPick(vocab.tiredOut));
                         break;
 
                     case checkIntent(msgIn, 'fight hatebot'):
-                        toSend = makeTelMsg(randomPick(tiredOut));
+                        toSend = makeTelMsg(randomPick(vocab.tiredOut));
                         break;
 
                     case checkIntent(msgIn, 'kill hatebot'):
-                        toSend = makeTelMsg(randomPick(tiredOut));
+                        toSend = makeTelMsg(randomPick(vocab.tiredOut));
                         break;
 
                     case msgIn.indexOf("say")!=-1:
@@ -296,40 +186,40 @@ app.post('/new-message', function (req, res) {
                         break;
 
                     case checkIntent(msgIn, 'fresh'):
-                        toSend = makeTelMsg(randomPick(freshOut));
+                        toSend = makeTelMsg(randomPick(vocab.freshOut));
                         break;
 
                     case checkIntent(msgIn, 'favourite'):
                         toSend = makeTelMsg('my favourite track is Messiah by Konflict, my favourite person is Dj Fresh');
                         break;
 
-                    case checkIntent(msgIn, 'name', questionIn):
+                    case checkIntent(msgIn, 'name', vocab.questionIn):
                         toSend = makeTelMsg('my name is LuvBot.. remember that human');
                         break;
 
-                    case checkIntent(msgIn, 'joke', orderIn):
-                        toSend = makeTelMsg(randomPick(jokeOut));
+                    case checkIntent(msgIn, 'joke', vocab.orderIn):
+                        toSend = makeTelMsg(randomPick(vocab.jokeOut));
                         break;
 
                     case checkIntent(msgIn, 'drum', 'bass'):
-                        toSend = makeTelMsg(randomPick(dnbOut));
+                        toSend = makeTelMsg(randomPick(vocab.dnbOut));
                         break;
 
-                    case checkIntent(msgIn, fatherIn):
-                        toSend = makeTelMsg(randomPick(fatherOut));
+                    case checkIntent(msgIn, vocab.fatherIn):
+                        toSend = makeTelMsg(randomPick(vocab.fatherOut));
                         break;
 
                     case checkIntent(msgIn, 'right', 'correct'):
                         toSend = makeTelMsg('i would always defer to Dj Fresh on matters of judgement');
                         break;
 
-                    case checkIntent(msgIn, 'sell', questionIn):
+                    case checkIntent(msgIn, 'sell', vocab.questionIn):
                         toSend = makeTelMsg('Im not programmed to sell things yet, but let me know what youd be interested in and ill let my humans know');
                         console.log("Sales Inquiry: " + message.text);
                         break;
 
-                    case checkIntent(msgIn, 'problem', statementIn):
-                        toSend = makeTelMsg(randomPick(problemOut));
+                    case checkIntent(msgIn, 'problem', vocab.statementIn):
+                        toSend = makeTelMsg(randomPick(vocab.problemOut));
                         console.log("Problem: " + message.text);
                         break;
 
@@ -337,17 +227,17 @@ app.post('/new-message', function (req, res) {
                         toSend = makeTelMsg('/Users/lionheart/CODE/APPS/BOTS/LUVBOT/Resources/IluvDNBlogoweb.jpg');
                         break;
 
-                    case checkIntent(msgIn, pictureIn):
+                    case checkIntent(msgIn, vocab.pictureIn):
                         toSend = makeTelMsg("Here you go!");
                         labelResource = "picture";
                         break;
 
-                    case checkIntent(msgIn, submissionIn):
+                    case checkIntent(msgIn, vocab.submissionIn):
                         toSend = makeTelMsg('here is the label submission form: ' + LABEL_SUBMISSION_FORM_LINK);
                         console.log("Submission Form Requested");
                         break;
 
-                    case checkIntent(msgIn, 'put', questionIn):
+                    case checkIntent(msgIn, 'put', vocab.questionIn):
                         toSend = makeTelMsg('here is the label submission form: ' + LABEL_SUBMISSION_FORM_LINK);
                         console.log("Submission Form Requested");
                         break;
@@ -362,15 +252,15 @@ app.post('/new-message', function (req, res) {
                         console.log("Label News Requested");
                         break;
 
-                    case checkIntent(msgIn, 'label', listIn):
+                    case checkIntent(msgIn, 'label', vocab.listIn):
                         labelResource = "form";
                         break;
 
-                    case checkIntent(msgIn, logIn):
+                    case checkIntent(msgIn, vocab.logIn):
                         labelResource = "log";
                         break;
 
-                    case checkIntent(msgIn, 'own', questionIn):
+                    case checkIntent(msgIn, 'own', vocab.questionIn):
                         toSend = makeTelMsg('when it comes to the playlist, we all own it together');
                         break;
 
@@ -379,40 +269,40 @@ app.post('/new-message', function (req, res) {
                         toSend = makeTelMsg("Its " + time.toUTCString());
                         break;
 
-                    case checkIntent(msgIn, playlistIn, orderIn):
-                        toSend = makeTelMsg(playlistReport);
+                    case checkIntent(msgIn, vocab.playlistIn, vocab.orderIn):
+                        toSend = makeTelMsg(vocab.playlistReport);
                         reportWanted = true;
                         console.log("Report requested");
                         break;
 
-                    case checkIntent(msgIn, playlistIn, newIn):
-                        toSend = makeTelMsg(playlistReport);
+                    case checkIntent(msgIn, vocab.playlistIn, vocab.newIn):
+                        toSend = makeTelMsg(vocab.playlistReport);
                         reportWanted = true;
                         console.log("Report requested");
                         break; 
 
-                    case checkIntent(msgIn, questionIn, 'you do'):
+                    case checkIntent(msgIn, vocab.questionIn, 'you do'):
                         toSend = makeTelMsg('I can send you logos, forms or playlist updates, for anything else youre probably better talking to yourself');
                         break;
 
-                    case checkIntent(msgIn, questionIn, 'purpose'):
+                    case checkIntent(msgIn, vocab.questionIn, 'purpose'):
                         toSend = makeTelMsg('I can send you logos, forms or playlist updates, for anything else youre probably better talking to yourself');
                         break;
 
-                    case checkIntent(msgIn, personalIn, questionIn):
-                        toSend = makeTelMsg(randomPick(personalOut));
+                    case checkIntent(msgIn, vocab.personalIn, vocab.questionIn):
+                        toSend = makeTelMsg(randomPick(vocab.personalOut));
                         break;
 
-                    case checkIntent(msgIn, welcomeIn):
+                    case checkIntent(msgIn, vocab.welcomeIn):
                         toSend.type="status";
                         break;
 
                     case msgIn == 'hey luvbot' || msgIn == 'hey lovbot' || msgIn == 'hey lvbot' || msgIn == 'hey lubot':
-                        toSend = makeTelMsg(randomPick(welcomeOut));
+                        toSend = makeTelMsg(randomPick(vocab.welcomeOut));
                         break;
 
                     default:
-                        toSend = makeTelMsg(randomPick(confusedOut));
+                        toSend = makeTelMsg(randomPick(vocab.confusedOut));
                         break;
                 };
                 notResponded = false;
@@ -577,7 +467,7 @@ app.post('/new-message', function (req, res) {
                     axios.post('https://api.telegram.org/' + BOT_TOKEN + '/sendMessage', {
                         chat_id: id,
                         status: 200,
-                        text: randomPick(fightTalk)    
+                        text: randomPick(vocab.fightTalk)    
                     })
                     .then(response => {
                         var start = new Date().getTime();
