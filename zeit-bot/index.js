@@ -43,7 +43,7 @@ let updateAlive, playlistReport, resultArray = [], labelsAdded = '', oldLabels =
 
 app.get('/diagnostic', function (req,res) {
     console.log('Diagnostic requested at: ', new Date().toUTCString())
-    res.status(200).send({ response: 'ok' })
+    res.status(200).send({ response: 'OK' })
 });
 
 app.get('/make-playlist', function (req,res) {

@@ -231,7 +231,6 @@ function messageFactory (inputs) {
             toSend = makeTelMsg(randomPick(vocab.confusedOut));
             break;
     };
-    console.log('returning toSend as: ', toSend)
     return { toSend, resourceType, reportWanted };
 };
 
