@@ -15,7 +15,7 @@ copy example.env to a file called .env and edit the file to add the tokens you r
 **npm install**\
 **npm run start**
 
-visit http://localhost:3333 or whatever port yout set the PORT variable to in your .env file.
+visit http://localhost:3333 or whatever port you set the PORT variable to in your .env file.
 **Login with Spotify** and then copy paste the **refresh token** that appears in the browser after login.
 
 You will need this refresh token for your now credentials in the zeit-bot/now.json file you will create.
