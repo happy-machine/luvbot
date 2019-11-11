@@ -15,11 +15,15 @@ const os = require('os')
 
 require('dotenv').config()
 
+import { colours } from './constants';
 import { checkIntent, randomPick, makeTelMsg } from './lib/bot';
+import { wait, errorRespond, todaysDate } from './lib/tools';
+import { spotObj } from './service/spotify-service';
 import * as vocab from './lib/vocab';
 
 app.use(bodyParser.json()); 
 app.use(bodyParser.urlencoded({ extended: true }));
+
 const { 
     DROPBOX, 
     EMAIL_PASSWORD, 
@@ -40,36 +44,19 @@ const {
     UPDATE_COMMAND
 } = process.env;
 
-var destUrl="", replUrl="", workData, endUrl, chatObject = {}, updateAlive, labelsAdded='', oldLabels='';
-
-// THIS USED TO SCHEDULE THE PLAYLIST AS IS NOW TAKEN CARE OF BY THE LAMBDA
-// YOU COULD DO IT ON NOW BUT THEN YOUD HAVE TO PAY FOR IT - GOD FORBID.
-
-/*
-if( new Date().getDay()> 1 && new Date().getDay()<6 ) {
-    console.log('Going to Update: '+new Date().toUTCString())
-    setInterval(updateThePlaylist, 1000 * 60 * 60);
-}
-else if ( new Date().getDay() == 6 && new Date().getHours () <= 20){
-    console.log('Going to Update during weekend: '+new Date().toUTCString())
-    setInterval(updateThePlaylist, 1000 * 60 * 60)
-}
-else {updateAlive=false}
-*/
+var destUrl = '', workData, updateAlive, labelsAdded = '', oldLabels = '';
 
 app.get('/make-playlist', function (req,res) {
     console.log('Lambda playlist requested at ', new Date().toUTCString())
     const resToLambda = res
     updateThePlaylist(resToLambda)
 });
-
-// BOT CODE BELOW            
+       
 app.post('/new-message', function (req, res) {
     const { message } = req.body
     if (!message || typeof message == "undefined") {
         return res.end();
     } else {
-        //START
         if (typeof message.text!=="undefined") {
             var msgIn=message.text.toLowerCase()
             var userName = message.from.first_name
@@ -551,31 +538,6 @@ function updateThePlaylist(resToLambda, room = 459812199){
     });
 
     var idName = [], i = -1, tokenExpiry, searchString = '', globalToken = "", errorLog = '';
-    const colours = {
-        Reset: "\x1b[0m%s\x1b[0m",
-        Bright: "\x1b[1m%s\x1b[0m",
-        Dim: "\x1b[2m%s\x1b[0m",
-        Underscore: "\x1b[4m%s\x1b[0m",
-        Blink: "\x1b[5m%s\x1b[0m",
-        Reverse: "\x1b[7m%s\x1b[0m",
-        Hidden: "\x1b[8m%s\x1b[0m",
-        FgBlack: "\x1b[30m%s\x1b[0m",
-        FgRed: "\x1b[31m%s\x1b[0m",
-        FgGreen: "\x1b[32m%s\x1b[0m",
-        FgYellow: "\x1b[33m%s\x1b[0m",
-        FgBlue: "\x1b[34m%s\x1b[0m",
-        FgMagenta: "\x1b[35m%s\x1b[0m",
-        FgCyan: "\x1b[36m%s\x1b[0m",
-        FgWhite: "\x1b[37m%s\x1b[0m",
-        BgBlack: "\x1b[40m%s\x1b[0m",
-        BgRed: "\x1b[41m%s\x1b[0m",
-        BgGreen: "\x1b[42m%s\x1b[0m",
-        BgYellow: "\x1b[43m%s\x1b[0m",
-        BgBlue: "\x1b[44m%s\x1b[0m",
-        BgMagenta: "\x1b[45m%s\x1b[0m",
-        BgCyan: "\x1b[46m%s\x1b[0m",
-        BgWhite: "\x1b[47m%s\x1b[0m",
-    }
 
     const mailOptions = (err) => {
         return {
@@ -594,125 +556,6 @@ function updateThePlaylist(resToLambda, room = 459812199){
                 console.log('Email sent: ' + info.response);
             };
         });
-    };
-
-    function wait(time) {
-        return new Promise((resolve, fail) => {
-            var start = new Date().getTime();
-            var end = start;
-            while (end < start + time) {
-                end = new Date().getTime();
-            }
-            resolve()
-        })
-    }
-    
-    function errorRespond(err) {
-        if (err.statusCode !== undefined) {
-            if (err.statusCode == '429') {
-                return function () {
-                    console.log(colours.FgRed, "Error 429, Waiting for " + JSON.stringify(err.response.headers["retry-after"]) + ' Seconds..');
-                    wait((err.response.headers["retry-after"] * 1000) + 1000);
-                }();
-            } else {
-                return function () {
-                    console.log(colours.FgRed, "Error : " + err.statusCode);
-                    wait(3000)
-                }();
-            };
-        } else {
-            return console.log(colours.FgRed, 'Error: undefined ' + err)
-        }
-    }
-
-    function todaysDate(){
-        var q = new Date(), m = q.getMonth(), d = q.getDate(), y = q.getFullYear()
-        return new Date(y, m, d)
-    }
-    
-    function spotObj (status,track_name,artist_name,uri,album_id) {
-        this.artist_name= artist_name;
-        this.track_name= track_name;
-        this.album_id= album_id;
-        this.uri= uri;
-        this.label=null;
-        this.tracks_total=null;
-        this.release_date= null;
-        this.added_date='';
-        this.status= { text:null , colour:null };
-        this.res = {};
-        this.to_be_added=null;
-        this.to_be_logged=null;
-        this.check_within_month = () => this.release_date + this.added_date,
-        this.check_added_within_week = () => this.release_date + this.added_date,
-        this.checkthis = (arg) => {
-            this.uri=arg; 
-            return this.uri;
-        };
-        this.set_status = () => {
-            results=[]
-            if ((todaysDate() > this.release_date) && (todaysDate() - this.release_date) >= 2505600000) { 
-                // CHECK IF OVER A MONTH OLD
-               this.status.text = "Older than a month";
-               this.status.colour = colours.FgRed;
-               this.to_be_added = false;
-               this.to_be_logged = false;
-               oldLabels += `${this.label}, Added: ${this.added_date.toString().substring(0,10)}, Released: ${this.release_date.toString().substring(0,10)}. `;
-            } else if (this.added_date - this.release_date > 1866240000) {
-                // IS THERE OVER A WEEK BETWEEN ADDED AND RELEASE DATE?
-                if(this.tracks_total >= 8) {
-                    this.status.text = "Older than 1 Week but added as Album Track.";
-                    this.status.colour = colours.FgGreen;
-                    this.to_be_added = true;
-                    this.to_be_logged = 5;
-                } else if (this.added_date  == todaysDate()) {
-                    this.status.text = "Added today but over a week old so not added.";
-                    this.status.colour = colours.FgRed;
-                    this.to_be_logged = 3;
-                    this.to_be_added =false;
-                };
-                  //WAS IT ADDED TODAY?      
-            } else  if (this.added_date >= todaysDate()) {
-                this.status.text = "ADDED TODAY.";
-                this.status.colour = colours.FgGreen;
-                this.to_be_added = true;
-                this.to_be_logged = 2;
-                if (this.added_date == this.release_date){
-                    this.status.text = "NEW TODAY!";
-                    this.status.colour = colours.FgGreen;
-                    this.to_be_added = true;
-                    this.to_be_logged = 1;
-                };
-            } else if (this.release_date > todaysDate()) {
-                this.status.text = "Date field incorrectly shows "+this.release_date.toString().substring(0,10)+".";
-                this.status.colour = colours.FgRed;
-                this.to_be_added = true;
-                this.to_be_logged = 5 ; 
-            } else {
-                this.status.text = "Within a month old";
-                this.status.colour = colours.FgWhite;
-                this.to_be_added = true;
-                this.to_be_logged = false;
-            };
-
-            if (!this.label && this.status.text !== 'undefined') {
-                this.status.text = "No label Metadata";
-                this.status.colour = colours.FgRed;
-                this.to_be_logged = 6;
-            };
-
-            if (this.status.text && (!this.status.text == 'Empty' || this.status.text.indexOf('error') !== -1 || this.status.text.indexOf('Error') !== -1)) {
-                this.status.colour=colours.FgRed;
-                this.to_be_added=false;
-                this.to_be_logged=7;
-            };
-
-            if ((!this.track_name || !this.artist_name || !this.uri || !this.album_id) && this.status.text !=='undefined') {
-                this.status.text="MetaData filed incorrectly";
-                this.to_be_logged=8;
-                this.status.colour = colours.FgRed
-            }; 
-        };
     };
     
     function spotifyCall(option, searchTerm) {
