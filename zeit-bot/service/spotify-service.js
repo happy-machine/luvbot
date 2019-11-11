@@ -1,4 +1,6 @@
 import { colours } from '../constants';
+import { todaysDate } from '../lib/tools';
+import { oldLabels } from '../index';
 
 function playlistFactory (status,track_name,artist_name,uri,album_id) {
     this.artist_name= artist_name;
@@ -20,14 +22,14 @@ function playlistFactory (status,track_name,artist_name,uri,album_id) {
         return this.uri;
     };
     this.set_status = () => {
-        results=[]
+        let results=[]
         if ((todaysDate() > this.release_date) && (todaysDate() - this.release_date) >= 2505600000) { 
             // CHECK IF OVER A MONTH OLD
            this.status.text = "Older than a month";
            this.status.colour = colours.FgRed;
            this.to_be_added = false;
            this.to_be_logged = false;
-           oldLabels += `${this.label}, Added: ${this.added_date.toString().substring(0,10)}, Released: ${this.release_date.toString().substring(0,10)}. `;
+           this.oldLabels += `${this.label}, Added: ${this.added_date.toString().substring(0,10)}, Released: ${this.release_date.toString().substring(0,10)}. `;
         } else if (this.added_date - this.release_date > 1866240000) {
             // IS THERE OVER A WEEK BETWEEN ADDED AND RELEASE DATE?
             if(this.tracks_total >= 8) {
