@@ -1,6 +1,6 @@
 import { colours } from '../constants';
 
-function spotObj (status,track_name,artist_name,uri,album_id) {
+function playlistFactory (status,track_name,artist_name,uri,album_id) {
     this.artist_name= artist_name;
     this.track_name= track_name;
     this.album_id= album_id;
@@ -85,4 +85,4 @@ function spotObj (status,track_name,artist_name,uri,album_id) {
     };
 };
 
-export { spotObj };
+export { playlistFactory };

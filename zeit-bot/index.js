@@ -18,7 +18,7 @@ require('dotenv').config()
 import { colours } from './constants';
 import { checkIntent, randomPick, makeTelMsg } from './lib/bot';
 import { wait, errorRespond, todaysDate } from './lib/tools';
-import { spotObj } from './service/spotify-service';
+import { playlistFactory } from './service/spotify-service';
 import * as vocab from './lib/vocab';
 
 app.use(bodyParser.json()); 
@@ -779,26 +779,26 @@ function updateThePlaylist(resToLambda, room = 459812199){
                     });
     
                 case 'getAlbums':
-                    var throt = function (spotObj) {
+                    var throt = function (playlistFactory) {
                         return new Promise(function(resolve, reject) {
-                            if (spotObj.album_id!=null && (typeof spotObj && typeof spotObj.album_id)!='undefined') {
-                                that.rpSafe(that.optionsGetAlbums(spotObj.album_id))
+                            if (playlistFactory.album_id!=null && (typeof playlistFactory && typeof playlistFactory.album_id)!='undefined') {
+                                that.rpSafe(that.optionsGetAlbums(playlistFactory.album_id))
                                 .then(res => {
-                                    spotObj.res=res.body;
-                                    resolve(spotObj);
+                                    playlistFactory.res=res.body;
+                                    resolve(playlistFactory);
                                 })
                                 .catch(e => {
                                     errorLog += '\n' + e;
                                     resolve(e);
                             })} else {
-                                resolve(spotObj);
+                                resolve(playlistFactory);
                             };
                         });
                     };
 
                     return new Promise((resolve, fail) => {
-                        array.forEach((spotObj) => {
-                            ref.push(promiseThrottle.add(throt.bind(this, spotObj)));
+                        array.forEach((playlistFactory) => {
+                            ref.push(promiseThrottle.add(throt.bind(this, playlistFactory)));
                         });
 
                         Promise.all(ref)
@@ -886,13 +886,13 @@ function updateThePlaylist(resToLambda, room = 459812199){
                 list.push(item.substring(0, item.length - 1))
             })
             list.shift()
-            spotObj.prototype.calls = list.length
+            playlistFactory.prototype.calls = list.length
             return getPlaylists.multiCall(list)
         })
         .then(res => {
             var calls = [], objToSet=[], callsToMake=[];
             res.forEach((result,i) => {
-                objToSet[i] = new spotObj ()
+                objToSet[i] = new playlistFactory ()
                 if (typeof (result && result.total) == 'undefined' || result.total == 0 || result.error) {
                     objToSet[i].status.text='Empty';
                     objToSet[i].status.colour='FgRed';
