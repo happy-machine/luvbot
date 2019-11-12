@@ -1,4 +1,5 @@
 {
+    "version": 1,
     "env":{
         "DROPBOX":"YOUR DROPBOX LINK ie. https://dl.dropboxusercontent.com/s/s0meCRa5yt0ken/PlayboyLabelUrls.txt?dl=1",
         "EMAIL_PASSWORD":"",
@@ -12,11 +13,13 @@
         "ARTIST_ROOM":"THE ID OF YOUR TELEGRAM ROOM", 
         "MAIN_ROOM":"THE ID OF YOUR TELEGRAM ROOM",
         "TEST_ROOM":"THE ID OF YOUR TELEGRAM ROOM",
+        "BOT_ROOM": "THE ID OF YOUR TELEGRAM ROOM",
         "MAIN_PLAYLIST_LINK": "https://open.spotify.com/user/iluvdrumandbass/playlist/blahlbLAHblahHash",
         "BOT_TOKEN":"YOUR TELGRAM BOT TOKEN ie. bot123456789:LONGHASTTOKENBLAHBLAHBLAHBLAHBLAH",
         "LABEL_UPDATE_FORM_LINK": "",
         "LABEL_NEWS_LINK": "",
         "LABEL_SUBMISSION_FORM_LINK": "",
-        "UPDATE_COMMAND": "MAGIC UPDATE COMMAND TO SEND BOT FROM LABEL ROOM TO START A PLAYLIST UPDATE"
+        "UPDATE_COMMAND": "MAGIC UPDATE COMMAND TO SEND BOT FROM LABEL ROOM TO START A PLAYLIST UPDATE",
+        "BOT_START_COMMANDS": "hey luvbot|hey lovbot|hey lvbot|hey lubot|hey lovebot"
     }
 }

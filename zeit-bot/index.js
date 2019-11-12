@@ -60,6 +60,7 @@ app.post('/new-message', function (req, res) {
     } else {
         if (typeof message.text !== "undefined") {
             const msgIn = message.text.toLowerCase()
+            console.log('new message from room id: ', message.chat.id);
             toSend = { content: null };
             if (checkIntent(msgIn, vocab.robotHailsIn) && typeof message !== undefined) {
                 /* First check the intent of the message, returns either a message, type,
@@ -94,6 +95,7 @@ app.post('/new-message', function (req, res) {
             return res.end();
         };
         // Return a message with resources
+        console.log('sending: ', toSend)
         resourceFactory({ message, toSend, res });
     }
 });

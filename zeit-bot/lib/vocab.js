@@ -1,4 +1,7 @@
-export const robotHailsIn = ['hey luvbot', 'hey lovbot', 'hey lvbot', 'hey lubot', 'hey lovebot'];
+import { parseEnvNames } from './tools';
+const { BOT_START_COMMANDS } = process.env;
+
+export const robotHailsIn = parseEnvNames(BOT_START_COMMANDS);
 export const playlistReport="I can't get the report right now, please try again later";
 export const noMessageOut = ['maybe try actually asking me something?', 'can i help you?', 'who the fuck are you?', 'how can i be of service?', 'Im kind of busy, what do you want?','Man, Ty drives me crazy!'];
 export const confusedOut = ['maybe try actually asking me something?', 'can i help you?', 'who the fuck are you?', 'how can i be of service?', 'Im kind of busy, what do you want?','Man, Ty drives me crazy!'];

@@ -34,4 +34,8 @@ function errorRespond(err) {
     }
 }
 
-export { todaysDate, wait, errorRespond };
+function parseEnvNames(envString){
+    return envString && envString.split('|');
+}
+
+export { todaysDate, wait, errorRespond, parseEnvNames };
