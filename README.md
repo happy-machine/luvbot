@@ -1,39 +1,72 @@
 ![Screnshot](https://i.imgur.com//LMRjQJJs.png)
+
 # luvbot
 The infamous bot and playlist-manager for the iluvdrumandbass Spotify playlist.
 
 ## Setup
-First setup a Spotify account and then visit https://developer.spotify.com/dashboard/ and follow the instructions to get a **Client ID** and a **Client Secret** then set up the services as follows:
+First setup a Spotify account and then visit https://developer.spotify.com/dashboard/ and follow the instructions to create an app with **Client ID** and a **Client Secret**
+Then in the app settings add http://localhost:3333/callback as redirect URIs and then set up the services as follows:
 
 ### refresh-token-getter
 
 In order to have a service that persistantly hits the Spotify API without requiring Oauth2 redirects and a login page
 You'll need a refresh token. In order to get a refresh token do the following:
 
-**cd refresh-token-getter**\
-copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.\
-**npm install**\
-**npm run start**
+```shell
+cd refresh-token-getter
+```
 
-visit http://localhost:3333 or whatever port you set the PORT variable to in your .env file.
-**Login with Spotify** and then copy paste the **refresh token** that appears in the browser after login.
+copy example.env to a file called .env and edit the file to add the tokens you received from Spotify above.
 
-You will need this refresh token for your now credentials in the zeit-bot/now.json file you will create.
+```shell
+cp example.env .env
+vim .env
+```
+
+install dependency and start the refresh token getter
+
+```shell
+npm install
+npm run start
+```
+
+visit [http://localhost:3333/login](http://localhost:3333/login) or whatever port you set the PORT variable to in your .env file.
+**Login with Spotify** and then copy the **refresh token** that appears in the browser after login.
+
+You will need this refresh token for your **now** credentials in the zeit-bot/now.json file you will create.
 
 
 ### zeit-bot  
 
 First you will need a Telegram bot token, this article explains how to get one: https://www.siteguarding.com/en/how-to-get-telegram-bot-api-token
 
-Install the NOW cli with **npm install -g now**  
+Make sure you have nodejs and npm installed to the latest versions
+
+Install the NOW cli with:
+
+```shell
+sudo npm install -g now
+```
 
 Copy the example-now.json into a file called now.json and populate the new file with the tokens you got from spotify above
-and the other variables described in this file.
+and the other variables described in this file. You can get the chat_id (ROOMS) from https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/getUpdates
+after inviting the bot to a chat
 
-Deploy the service with the command **now** from inside the zeit-bot folder in your terminal.
+```shell
+cp zeit-bot/example-now.json zeit-bot/now.json
+```
+
+From inside the zeit-bot folder in your terminal, deploy the service with the command:
+
+```shell
+cd zeit-bot/ 
+now
+```
 
 Connect the instance to your telegram bot via webhook:
->curl -F "url=https://{THE NOW DEPLOYMENT URL RETURNED BY THE COMMAND ABOVE}/new-message" https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/setWebhook
+```shell
+curl -F "url=https://{THE NOW DEPLOYMENT URL RETURNED BY THE COMMAND ABOVE}/new-message" https://api.telegram.org/bot{YOUR TELEGRAM BOT TOKEN}/setWebhook
+```
 
 You should now be able to chat with the bot via telegram.
 
