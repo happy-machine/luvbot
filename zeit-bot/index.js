@@ -71,7 +71,7 @@ app.post('/new-message', function (req, res) {
                 resourceType = response.resourceType;
                 reportWanted = response.reportWanted;
                 if (resourceType && typeof message!=undefined && fightMode==false) {
-                    if (ADMIN_GROUP.includes(message.chat.id)) {
+                    if (Object.keys(ADMIN_GROUP).includes(message.chat.id)) {
                         /* if the user is in the Admin group then operate on types accordingly */
                         const { tmpMessage, tmpPicture } = adminFactory({ 
                             msgIn, 
