@@ -142,5 +142,5 @@ app.get('/refresh_token', function(req, res) {
   });
 });
 
-console.log(`Go to http://localhost:${process.env.PORT}/`);
+console.log(`Go to http://localhost:${process.env.PORT}/login`);
 app.listen(process.env.PORT);
