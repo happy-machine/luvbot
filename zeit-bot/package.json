@@ -13,7 +13,7 @@
     "express": "^4.16.2",
     "file-system": "^2.2.2",
     "node-telegram-bot-api": "^0.30.0",
-    "nodemailer": "^4.6.8",
+    "nodemailer": "^6.4.16",
     "os": "^0.1.1",
     "promise-throttle": "^0.4.0",
     "request": "^2.85.0",
